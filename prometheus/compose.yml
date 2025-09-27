@@ -6,8 +6,19 @@ services:
     container_name: prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    expose:
+      - "9090"   
+
+  nginx:
+    image: nginx:alpine
+    container_name: prometheus-proxy
     ports:
-      - "9090:9090"
+      - "9090:80"  
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./htpasswd:/etc/nginx/.htpasswd:ro
+    depends_on:
+      - prometheus
 
   grafana:
     image: grafana/grafana:latest
@@ -21,3 +32,4 @@ services:
 
 volumes:
   grafana-storage:
+
